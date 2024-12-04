@@ -67,7 +67,7 @@ func CreateInstructor(c *gin.Context) {
 	}
 
 	instructors := models.Instructors{
-		Nama:  input.Name,
+		Name:  input.Name,
 		Email: input.Email,
 		Phone: input.Phone,
 	}
@@ -98,16 +98,6 @@ func UpdateInstructor(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
-
-	if input.Name != nil {
-		instructors.Nama = *input.Name
-	}
-	if input.Email != nil {
-		instructors.Email = *input.Email
-	}
-	if input.Phone != nil {
-		instructors.Phone = *input.Phone
 	}
 
 	// Save the updated Instructors

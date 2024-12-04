@@ -13,6 +13,7 @@ type RegisterInput struct {
 	Name     string `json:"name" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
+	Username string `json:"username" binding:"required"`
 }
 
 type LoginInput struct {
@@ -39,7 +40,7 @@ func RegisterUser(c *gin.Context) {
 	hashedPassword, _ := utils.HashPassword(input.Password)
 
 	// Create a new user
-	user := models.User{Name: input.Name, Email: input.Email, Password: hashedPassword, Role: "student"}
+	user := models.User{Name: input.Name, Email: input.Email, Password: hashedPassword, Username: input.Username, Role: "student"}
 	if err := database.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user"})
 		return

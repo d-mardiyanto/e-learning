@@ -10,7 +10,7 @@ import (
 )
 
 type StudentsInput struct {
-	Nama        string `json:"nama" binding:"required"`
+	Name        string `json:"name" binding:"required"`
 	Gender      string `json:"gender"`
 	Birthdate   string `json:"birthdate"`
 	Birthplace  string `json:"birthplace"`
@@ -21,7 +21,7 @@ type StudentsInput struct {
 }
 
 type UpdateStudentsInput struct {
-	Nama        *string `json:"nama" binding:"required"`
+	Name        *string `json:"name" binding:"required"`
 	Gender      *string `json:"gender"`
 	Birthdate   *string `json:"birthdate"`
 	Birthplace  *string `json:"birthplace"`
@@ -77,7 +77,7 @@ func CreateStudent(c *gin.Context) {
 	}
 
 	students := models.Students{
-		Nama:        input.Nama,
+		Name:        input.Name,
 		Gender:      input.Gender,
 		Birthdate:   input.Birthdate,
 		Birthplace:  input.Birthplace,

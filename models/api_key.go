@@ -8,7 +8,7 @@ import (
 
 type APIKey struct {
 	gorm.Model
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	Token     string    `gorm:"uniqueIndex;not null" json:"key_value"`
-	CreatedAt time.Time `json:"created_at"`
+	Token     string    `gorm:"uniqueIndex;not null" json:"token"`
+	CreatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
 }

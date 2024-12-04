@@ -13,16 +13,15 @@ import (
 )
 
 type CourseInput struct {
-	KodeMateri string `json:"kode_materi" binding:"required"`
-	Judul      string `json:"judul"`
-	Kelas      string `json:"kelas"`
-	Prodi      string `json:"prodi"`
+	Title        string `json:"title" binding:"required"`
+	Classes      string `json:"classes" binding:"required"`
+	StudyProgram string `json:"program_study" binding:"required"`
 }
 
 type UpdateCourseInput struct {
-	Judul *string `json:"judul"`
-	Kelas *string `json:"kelas"`
-	Prodi *string `json:"prodi"`
+	Title        *string `json:"title" binding:"required"`
+	Classes      *string `json:"classes" binding:"required"`
+	StudyProgram *string `json:"program_study" binding:"required"`
 }
 
 func ShowCourses(c *gin.Context) {
@@ -73,11 +72,10 @@ func CreateCourse(c *gin.Context) {
 
 	// Create a new course
 	course := models.Course{
-		KodeMateri: input.KodeMateri,
-		Judul:      input.Judul,
-		Kelas:      input.Kelas,
-		Prodi:      input.Prodi,
-		CreatedBy:  instructorID,
+		Title:        input.Title,
+		Classes:      input.Classes,
+		StudyProgram: input.StudyProgram,
+		CreatedBy:    instructorID,
 	}
 
 	if err := database.DB.Create(&course).Error; err != nil {
@@ -108,16 +106,6 @@ func UpdateCourse(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	}
-
-	if input.Judul != nil {
-		course.Judul = *input.Judul
-	}
-	if input.Kelas != nil {
-		course.Kelas = *input.Kelas
-	}
-	if input.Prodi != nil {
-		course.Prodi = *input.Prodi
 	}
 
 	// Save the updated course
@@ -153,14 +141,14 @@ func DeleteCourse(c *gin.Context) {
 // UploadCourseFile handles the file upload for a course material
 func UploadCourseFile(c *gin.Context) {
 	// Parse form data
-	idMateri := c.PostForm("id_materi")
+	CourseID := c.PostForm("course_id")
 	fileType := c.PostForm("file_type")
 	fileLabel := c.PostForm("file_label")
 	orderNumberStr := c.PostForm("order_number") // Order number as string
 
 	// Validate required fields
-	if idMateri == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id_materi is required"})
+	if CourseID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Course ID is required"})
 		return
 	}
 
@@ -179,7 +167,7 @@ func UploadCourseFile(c *gin.Context) {
 	}
 
 	// Save the file to a local directory
-	uploadPath := "uploads/courses/" + idMateri
+	uploadPath := "uploads/courses/" + CourseID
 	fileName := fmt.Sprintf("%d-%s", time.Now().Unix(), filepath.Base(file.Filename))
 	filePath := filepath.Join(uploadPath, fileName)
 
@@ -191,7 +179,7 @@ func UploadCourseFile(c *gin.Context) {
 
 	// Create a new CourseFiles record in the database
 	courseFile := models.CourseFiles{
-		IdMateri:    idMateri,
+		CourseID:    CourseID,
 		FileType:    fileType,
 		FileLabel:   fileLabel,
 		OrderNumber: orderNumber, // Assign the converted int value

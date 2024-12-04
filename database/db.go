@@ -1,6 +1,7 @@
 package database
 
 import (
+	"e-learning/models"
 	"fmt"
 	"log"
 	"os"
@@ -30,6 +31,6 @@ func ConnectDB() {
 	}
 
 	// // Migrate models
-	// DB.AutoMigrate(&models.User{}, &models.Course{})
+	DB.AutoMigrate(&models.Instructors{}, &models.Students{}, &models.Students_Academic{}, &models.Course{}, &models.CourseFiles{}, &models.Classes{}, &models.StudyProgram{}, &models.Quiz{}, &models.Questions{}, &models.Answer{}, &models.Answer_Detail{})
 	log.Println("Database connection established")
 }

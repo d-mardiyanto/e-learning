@@ -6,11 +6,9 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Instructors struct {
+type Classes struct {
 	gorm.Model
-	Name      string    `json:"name" binding:"required"`
-	Email     string    `json:"email" binding:"required"`
-	Phone     string    `json:"phone" binding:"required"`
+	ClassName string    `json:"class_name" binding:"required"`
 	CreatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
 }

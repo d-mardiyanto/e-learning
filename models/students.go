@@ -1,24 +1,35 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+
+	"github.com/jinzhu/gorm"
+)
 
 type Students struct {
 	gorm.Model
-	Nama        string              `json:"nama" binding:"required"`
-	Gender      string              `json:"gender"`
-	Birthdate   string              `json:"birthdate"`
+	Name        string              `json:"name" binding:"required"`
+	Gender      string              `json:"gender" binding:"required"`
+	Birthdate   string              `json:"birthdate" binding:"required"`
 	Birthplace  string              `json:"birthplace"`
 	Address     string              `json:"address"`
-	Phone       string              `json:"phone"`
-	Email       string              `json:"email"`
-	EnteredYear int                 `json:"entered_year"`
-	Academic    []Students_Academic `gorm:"foreignKey:id_student" json:"course_files"` // Association
+	Phone       string              `json:"phone" binding:"required"`
+	Email       string              `json:"email" binding:"required"`
+	EnteredYear int                 `gorm:"type:year" json:"entered_year"`
+	CreatedAt   time.Time           `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
+	UpdatedAt   time.Time           `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
+	Academic    []Students_Academic `gorm:"foreignKey:student_id" json:"academic"` // Association
 }
 
 type Students_Academic struct {
 	gorm.Model
-	IDStudent string `json:"id_materi" binding:"required"`
-	Semester  string `json:"semester"`
-	Kelas     string `json:"kelas"`
-	Prodi     string `json:"prodi"`
+	StudentId    string    `json:"student_id" gorm:"constraint:OnDelete:CASCADE;" binding:"required"`
+	Semester     string    `json:"semester"`
+	Year         int       `gorm:"type:year" json:"year"`
+	StartDate    time.Time `gorm:"type:date" json:"start_date"`
+	EndDate      time.Time `gorm:"type:date" json:"end_date"`
+	Classes      string    `json:"classes" binding:"required"`
+	StudyProgram string    `json:"program_study" binding:"required"`
+	CreatedAt    time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
+	UpdatedAt    time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
 }

@@ -31,6 +31,20 @@ func ConnectDB() {
 	}
 
 	// // Migrate models
-	DB.AutoMigrate(&models.Instructors{}, &models.Students{}, &models.Students_Academic{}, &models.Course{}, &models.CourseFiles{}, &models.Classes{}, &models.StudyProgram{}, &models.Quiz{}, &models.Questions{}, &models.Answer{}, &models.Answer_Detail{})
+	DB.AutoMigrate(
+		&models.Instructors{},
+		&models.Students{},
+		&models.Students_Academic{},
+		&models.Course{},
+		&models.CourseFiles{},
+		&models.Classes{},
+		&models.StudyProgram{},
+		&models.Quiz{},
+		&models.Questions{},
+		&models.Answer{},
+		&models.Answer_Detail{},
+		&models.Transaction{},
+		&models.TransactionDetail{},
+	)
 	log.Println("Database connection established")
 }

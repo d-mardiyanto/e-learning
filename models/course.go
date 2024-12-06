@@ -8,13 +8,16 @@ import (
 
 type Course struct {
 	gorm.Model
-	Title        string        `json:"title" binding:"required"`
-	Classes      string        `json:"classes" binding:"required"`
-	StudyProgram string        `json:"program_study" binding:"required"`
-	CreatedBy    uint          `json:"created_by" binding:"required"`
-	CreatedAt    time.Time     `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
-	UpdatedAt    time.Time     `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
-	CourseFiles  []CourseFiles `gorm:"foreignKey:course_id" json:"course_files"` // Association
+	Title        string         `json:"title" binding:"required"`
+	Thumbnail    string         `json:"thumbnail"`
+	Description  string         `json:"description"`
+	Classes      string         `json:"classes" binding:"required"`
+	StudyProgram string         `json:"program_study" binding:"required"`
+	CreatedBy    uint           `json:"created_by" binding:"required"`
+	CreatedAt    time.Time      `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
+	UpdatedAt    time.Time      `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
+	CourseFiles  []CourseFiles  `gorm:"foreignKey:course_id" json:"course_files"`  // Association
+	Rating       []CourseRating `gorm:"foreignKey:course_id" json:"course_rating"` // Association
 }
 
 type CourseFiles struct {
@@ -26,4 +29,13 @@ type CourseFiles struct {
 	File        string    `json:"file" binding:"required"`
 	CreatedAt   time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
+}
+
+type CourseRating struct {
+	gorm.Model
+	CourseID  string    `json:"course_id" gorm:"constraint:OnDelete:CASCADE;" binding:"required"`
+	Rate      string    `json:"rate" binding:"required"`
+	RatedBy   string    `json:"rated_by"`
+	CreatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
 }

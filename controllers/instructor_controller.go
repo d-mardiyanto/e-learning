@@ -10,15 +10,17 @@ import (
 )
 
 type InstructorsInput struct {
-	Name  string `json:"name" binding:"required"`
-	Email string `json:"email"`
-	Phone string `json:"phone"`
+	Name       string `json:"name" binding:"required"`
+	Profession string `json:"profession"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
 }
 
 type UpdateInstructorsInput struct {
-	Name  *string `json:"name" binding:"required"`
-	Email *string `json:"email"`
-	Phone *string `json:"phone"`
+	Name       *string `json:"name" binding:"required"`
+	Profession *string `json:"profession"`
+	Email      *string `json:"email"`
+	Phone      *string `json:"phone"`
 }
 
 func ShowInstructors(c *gin.Context) {
@@ -67,9 +69,10 @@ func CreateInstructor(c *gin.Context) {
 	}
 
 	instructors := models.Instructors{
-		Name:  input.Name,
-		Email: input.Email,
-		Phone: input.Phone,
+		Name:       input.Name,
+		Profession: input.Profession,
+		Email:      input.Email,
+		Phone:      input.Phone,
 	}
 
 	if err := database.DB.Create(&instructors).Error; err != nil {

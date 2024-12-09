@@ -24,6 +24,7 @@ type Transaction struct {
 type TransactionDetail struct {
 	gorm.Model
 	PaymentID   uint      `gorm:"not null" json:"payment_id"`                     // Foreign key to Payment
+	ProductID   int       `gorm:"type:int(11);not null" json:"product_id"`        // Name of the product or service
 	ProductName string    `gorm:"type:varchar(100);not null" json:"product_name"` // Name of the product or service
 	Quantity    int       `gorm:"not null" json:"quantity"`                       // Quantity of items
 	Price       float64   `gorm:"not null" json:"price"`                          // Price per unit

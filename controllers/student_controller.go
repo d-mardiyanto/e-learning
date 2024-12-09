@@ -20,17 +20,6 @@ type StudentsInput struct {
 	EnteredYear int    `json:"entered_year"`
 }
 
-type UpdateStudentsInput struct {
-	Name        *string `json:"name" binding:"required"`
-	Gender      *string `json:"gender"`
-	Birthdate   *string `json:"birthdate"`
-	Birthplace  *string `json:"birthplace"`
-	Address     *string `json:"address"`
-	Phone       *string `json:"phone"`
-	Email       *string `json:"email"`
-	EnteredYear *int    `json:"entered_year"`
-}
-
 func ShowStudents(c *gin.Context) {
 	var students []models.Students
 
@@ -109,14 +98,23 @@ func UpdateStudent(c *gin.Context) {
 	}
 
 	// Bind the input JSON
-	var input UpdateStudentsInput
+	var input StudentsInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	students.Name = input.Name
+	students.Gender = input.Gender
+	students.Birthdate = input.Birthdate
+	students.Birthplace = input.Birthplace
+	students.Address = input.Address
+	students.Phone = input.Phone
+	students.Email = input.Email
+	students.EnteredYear = input.EnteredYear
+
 	// Save the updated Students
-	if err := database.DB.Save(&input).Error; err != nil {
+	if err := database.DB.Save(&students).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update Students"})
 		return
 	}

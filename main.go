@@ -14,7 +14,7 @@ func main() {
 	config.LoadConfig()
 
 	// Initialize database
-	database.ConnectDB()
+	database.ConnectDB(false)
 
 	// Set up Gin
 	router := gin.Default()

@@ -14,10 +14,6 @@ type ClassesInput struct {
 	ClassName string `json:"class_name" binding:"required"`
 }
 
-type UpdateClassesInput struct {
-	ClassName *string `json:"class_name" binding:"required"`
-}
-
 func ShowClasses(c *gin.Context) {
 	var classes []models.Classes
 
@@ -89,11 +85,13 @@ func UpdateClasses(c *gin.Context) {
 	}
 
 	// Bind the input JSON
-	var input UpdateClassesInput
+	var input ClassesInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	classes.ClassName = input.ClassName
 
 	// Save the updated Classes
 	if err := database.DB.Save(&classes).Error; err != nil {

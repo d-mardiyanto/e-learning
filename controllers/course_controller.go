@@ -14,12 +14,17 @@ import (
 
 type CourseInput struct {
 	Title        string `json:"title" binding:"required"`
+	Description  string `json:"description"`
+	Thumbnail    string `json:"thumbnail"`
+	CreatedBy    int    `json:"created_by" binding:"required"`
 	Classes      string `json:"classes" binding:"required"`
 	StudyProgram string `json:"program_study" binding:"required"`
 }
 
 type UpdateCourseInput struct {
 	Title        *string `json:"title" binding:"required"`
+	Description  *string `json:"description"`
+	Thumbnail    *string `json:"thumbnail"`
 	Classes      *string `json:"classes" binding:"required"`
 	StudyProgram *string `json:"program_study" binding:"required"`
 }
@@ -61,8 +66,6 @@ func GetCourse(c *gin.Context) {
 }
 
 func CreateCourse(c *gin.Context) {
-	instructorID := c.MustGet("userID").(uint)
-
 	// Bind and validate input
 	var input CourseInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -73,9 +76,10 @@ func CreateCourse(c *gin.Context) {
 	// Create a new course
 	course := models.Course{
 		Title:        input.Title,
+		Description:  input.Description,
 		Classes:      input.Classes,
 		StudyProgram: input.StudyProgram,
-		CreatedBy:    instructorID,
+		CreatedBy:    input.CreatedBy,
 	}
 
 	if err := database.DB.Create(&course).Error; err != nil {
@@ -92,21 +96,24 @@ func CreateCourse(c *gin.Context) {
 func UpdateCourse(c *gin.Context) {
 	// Get the course ID from the URL
 	courseID := c.Param("id")
-
-	// Check if the course exists and belongs to the instructor
-	instructorID := c.MustGet("userID").(uint)
 	var course models.Course
-	if err := database.DB.Where("id = ? AND createdBy = ?", courseID, instructorID).First(&course).Error; err != nil {
+	if err := database.DB.Where("id = ?", courseID).First(&course).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
 		return
 	}
 
 	// Bind the input JSON
-	var input UpdateCourseInput
+	var input CourseInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Create a new course
+	course.Title = input.Title
+	course.Description = input.Description
+	course.Classes = input.Classes
+	course.StudyProgram = input.StudyProgram
 
 	// Save the updated course
 	if err := database.DB.Save(&course).Error; err != nil {
@@ -121,10 +128,8 @@ func DeleteCourse(c *gin.Context) {
 	// Get the course ID from the URL
 	courseID := c.Param("id")
 
-	// Check if the course exists and belongs to the instructor
-	instructorID := c.MustGet("userID").(uint)
 	var course models.Course
-	if err := database.DB.Where("id = ? AND instructor_id = ?", courseID, instructorID).First(&course).Error; err != nil {
+	if err := database.DB.Where("id = ?", courseID).First(&course).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Course not found"})
 		return
 	}
@@ -195,5 +200,50 @@ func UploadCourseFile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "File uploaded successfully",
 		"file":    courseFile,
+	})
+}
+
+// UploadCourseFile handles the file upload for a course material
+func UploadThumbnail(c *gin.Context) {
+	// Parse form data
+	CourseID := c.PostForm("course_id")
+
+	// Validate required fields
+	if CourseID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Course ID is required"})
+		return
+	}
+
+	// Handle file upload
+	file, err := c.FormFile("thumbnail")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Thumbnail upload failed", "details": err.Error()})
+		return
+	}
+
+	// Save the file to a local directory
+	uploadPath := "uploads/courses/" + CourseID + "/thumbnail"
+	fileName := fmt.Sprintf("%d-%s", time.Now().Unix(), filepath.Base(file.Filename))
+	filePath := filepath.Join(uploadPath, fileName)
+
+	// Create the directory if it doesn't exist
+	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file", "details": err.Error()})
+		return
+	}
+
+	// Create a new CourseFiles record in the database
+	var course models.Course
+	course.Thumbnail = filePath
+
+	if err := database.DB.Model(&models.Course{}).Where("id = ?", CourseID).UpdateColumn("thumbnail", filePath).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file record", "details": err.Error()})
+		return
+	}
+
+	// Respond with success
+	c.JSON(http.StatusOK, gin.H{
+		"message": "File uploaded successfully",
+		"file":    course,
 	})
 }

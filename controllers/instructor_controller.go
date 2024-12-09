@@ -16,13 +16,6 @@ type InstructorsInput struct {
 	Phone      string `json:"phone"`
 }
 
-type UpdateInstructorsInput struct {
-	Name       *string `json:"name" binding:"required"`
-	Profession *string `json:"profession"`
-	Email      *string `json:"email"`
-	Phone      *string `json:"phone"`
-}
-
 func ShowInstructors(c *gin.Context) {
 	var instructors []models.Instructors
 
@@ -97,11 +90,16 @@ func UpdateInstructor(c *gin.Context) {
 	}
 
 	// Bind the input JSON
-	var input UpdateInstructorsInput
+	var input InstructorsInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	instructors.Name = input.Name
+	instructors.Profession = input.Profession
+	instructors.Email = input.Email
+	instructors.Phone = input.Phone
 
 	// Save the updated Instructors
 	if err := database.DB.Save(&instructors).Error; err != nil {

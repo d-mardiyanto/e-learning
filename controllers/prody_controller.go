@@ -10,12 +10,7 @@ import (
 )
 
 type StudyProgramInput struct {
-	ID          string `json:"id" binding:"required"`
 	ProgramName string `json:"program_name" binding:"required"`
-}
-
-type UpdateStudyProgramInput struct {
-	ProgramName *string `json:"program_name" binding:"required"`
 }
 
 func ShowStudyProgram(c *gin.Context) {
@@ -89,11 +84,13 @@ func UpdateStudyProgram(c *gin.Context) {
 	}
 
 	// Bind the input JSON
-	var input UpdateStudyProgramInput
+	var input StudyProgramInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	studyProgram.ProgramName = input.ProgramName
 
 	// Save the updated StudyProgram
 	if err := database.DB.Save(&studyProgram).Error; err != nil {

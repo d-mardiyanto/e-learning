@@ -13,7 +13,7 @@ type Course struct {
 	Description  string         `json:"description"`
 	Classes      string         `json:"classes" binding:"required"`
 	StudyProgram string         `json:"program_study" binding:"required"`
-	CreatedBy    uint           `json:"created_by" binding:"required"`
+	CreatedBy    int            `json:"created_by" binding:"required"`
 	CreatedAt    time.Time      `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
 	UpdatedAt    time.Time      `gorm:"type:timestamp;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP"`
 	CourseFiles  []CourseFiles  `gorm:"foreignKey:course_id" json:"course_files"`  // Association

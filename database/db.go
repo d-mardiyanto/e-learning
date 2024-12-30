@@ -33,6 +33,8 @@ func ConnectDB(migrationState bool) {
 	// // Migrate models
 	if migrationState {
 		DB.AutoMigrate(
+			&models.APIKey{},
+			&models.User{},
 			&models.Instructors{},
 			&models.Students{},
 			&models.Students_Academic{},

@@ -33,6 +33,9 @@ func RegisterRoutes(router *gin.Engine) {
 
 	homepage := router.Group("/homepage")
 	{
+		homepage.GET("/classes/show", controllers.ShowClasses)
+		homepage.GET("/classes/show/:id", controllers.GetClasses)
+
 		// Course
 		homepage.GET("/courses/show", controllers.ShowCourses)
 		homepage.GET("/courses/show/:id", controllers.GetCourse)
@@ -53,8 +56,6 @@ func RegisterRoutes(router *gin.Engine) {
 		protected.POST("/classes", controllers.CreateClasses)
 		protected.PUT("/classes/update/:id", controllers.UpdateClasses)
 		protected.DELETE("/classes/delete/:id", controllers.DeleteClasses)
-		protected.GET("/classes/show", controllers.ShowClasses)
-		protected.GET("/classes/show/:id", controllers.GetClasses)
 
 		// Prodi
 		protected.POST("/prody", controllers.CreateStudyProgram)

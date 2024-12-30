@@ -26,7 +26,7 @@ func ShowClasses(c *gin.Context) {
 	// Respond with the list of Classes
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Classes retrieved successfully",
-		"Classes": classes,
+		"classes": classes,
 	})
 }
 
@@ -46,7 +46,7 @@ func GetClasses(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Classes retrieved successfully",
-		"Classes": classes,
+		"classes": classes,
 	})
 }
 
@@ -70,7 +70,7 @@ func CreateClasses(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Classes created successfully",
-		"Classes": classes,
+		"classes": classes,
 	})
 }
 
